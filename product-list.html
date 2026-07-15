@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Products - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--warning:#fbbf24;--gradient:linear-gradient(135deg,#2563eb,#1e40af);--bg1:#0f172a;--bg2:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);padding:20px;color:#e2e8f0;}
+
+.card{max-width:1300px;margin:20px auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:35px;border-radius:28px;border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 80px rgba(0,0,0,.3);}
+h2{text-align:center;font-weight:900;margin-bottom:25px;font-size:30px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;flex-wrap:wrap;gap:15px;}
+.top-bar a{color:var(--primary);font-weight:800;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.btn-new{background:var(--gradient);padding:14px 22px;border-radius:12px;color:#fff;font-weight:800;text-decoration:none;display:flex;align-items:center;gap:8px;box-shadow:0 6px 20px rgba(37,99,235,.3);}
+.btn-new:hover{transform:translateY(-2px);}
+.logout{color:var(--danger);cursor:pointer;font-weight:800;background:rgba(239,68,68,.15);padding:12px 20px;border-radius:12px;display:flex;align-items:center;gap:8px;}
+.logout:hover{background:var(--danger);color:#fff;}
+
+.filters{display:grid;grid-template-columns:2fr 1fr;gap:18px;margin-bottom:30px;}
+.filters input, .filters select{width:100%;padding:16px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-weight:600;}
+.filters input:focus, .filters select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.2);}
+
+.product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:22px;}
+.product-card{background:rgba(0,0,0,.3);border-radius:18px;padding:18px;border:2px solid transparent;transition:.4s;position:relative;overflow:hidden;}
+.product-card::before{content:'';position:absolute;top:0;left:0;width:100%;height:4px;background:var(--gradient);}
+.product-card:hover{transform:translateY(-8px);border-color:var(--primary);box-shadow:0 20px 60px rgba(37,99,235,.2);}
+.product-card img{width:100%;height:220px;object-fit:cover;border-radius:14px;margin-bottom:12px;}
+.product-card h3{font-size:18px;margin-bottom:8px;color:#fff;font-weight:800;}
+.product-card .price{color:var(--accent);font-weight:900;font-size:20px;}
+.product-card .old-price{text-decoration:line-through;color:#94a3b8;font-size:14px;margin-left:10px;font-weight:600;}
+.product-card .cat{font-size:13px;color:#94a3b8;margin:8px 0;font-weight:600;display:flex;align-items:center;gap:6px;}
+.btn-group{display:flex;gap:10px;margin-top:15px;}
+.btn-edit, .btn-delete{flex:1;padding:12px;border:none;border-radius:10px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;transition:.3s;}
+.btn-edit{background:var(--primary);color:#fff;}
+.btn-delete{background:var(--danger);color:#fff;}
+.btn-edit:hover,.btn-delete:hover{transform:scale(1.05);}
+
+#loadMore{width:100%;padding:16px;margin-top:30px;background:rgba(255,255,255,.1);border:2px solid var(--primary);color:var(--primary);border-radius:14px;font-weight:800;cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;gap:10px;}
+#loadMore:hover{background:var(--primary);color:#fff;}
+#loadMore:disabled{opacity:0.5;cursor:not-allowed;}
+#status{text-align:center;margin:20px 0;color:#94a3b8;font-weight:600;}
+
+/* Custom Popup */
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:999;animation:fadeIn.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup-box{background:#1e293b;padding:35px;border-radius:24px;width:90%;max-width:420px;text-align:center;transform:scale(.9);animation:scaleUp.3s forwards;border:1px solid rgba(255,255,255,.1);}
+@keyframes scaleUp{to{transform:scale(1);}}
+.popup-icon{font-size:60px;margin-bottom:15px;}
+.popup-box h3{font-size:22px;font-weight:900;margin-bottom:10px;color:#fff;}
+.popup-box p{color:#94a3b8;margin-bottom:20px;font-weight:600;}
+.popup-btns{display:flex;gap:10px;}
+.popup-btn{flex:1;padding:14px;border:none;border-radius:14px;font-weight:800;cursor:pointer;font-size:15px;}
+.btn-confirm{background:var(--gradient);color:#fff;}
+.btn-cancel{background:#334155;color:#e2e8f0;}
+
+@media(max-width:768px){.filters{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+
+<div class="card">
+<div class="top-bar">
+    <a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <a href="products.html" class="btn-new"><i class="fa-solid fa-plus"></i> Add Product</a>
+    <span class="logout" id="logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+</div>
+
+<h2><i class="fa-solid fa-boxes-stacked"></i> All Products</h2>
+
+<div class="filters">
+    <input type="text" id="searchInput" placeholder="🔍 Search by name or keyword...">
+    <select id="categoryFilter">
+        <option value="">All Categories</option>
+    </select>
+</div>
+
+<div id="status"><i class="fa-solid fa-spinner fa-spin"></i> Loading products...</div>
+<div class="product-grid" id="productGrid"></div>
+<button id="loadMore"><i class="fa-solid fa-arrow-down"></i> Load More</button>
+</div>
+
+<!-- Custom Popup -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <div class="popup-icon" id="popupIcon"></div>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMsg"></p>
+        <div class="popup-btns" id="popupBtns">
+            <button class="popup-btn btn-confirm" id="popupOk">OK</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, deleteDoc, query, orderBy, limit, startAfter } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+    if(!user) window.location.href = "index.html";
+})
+document.getElementById('logout').onclick = () => showPopup('warning', 'Logout?', 'Are you sure you want to logout?', true, () => signOut(auth));
+
+let allProducts = [];
+let allCategories = [];
+let displayedProducts = [];
+let lastVisible = null;
+let isLoading = false;
+const LIMIT = 20;
+
+// Custom Popup
+function showPopup(type, title, msg, showCancel = false, callback = null){
+    const popup = document.getElementById('popup');
+    const icon = document.getElementById('popupIcon');
+    const btns = document.getElementById('popupBtns');
+    
+    document.getElementById('popupTitle').innerText = title;
+    document.getElementById('popupMsg').innerText = msg;
+    
+    if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>';
+    if(type === 'warning') icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>';
+    if(type === 'danger') icon.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>';
+    
+    if(showCancel){
+        btns.innerHTML = `
+            <button class="popup-btn btn-confirm" id="popupYes">Yes</button>
+            <button class="popup-btn btn-cancel" id="popupNo">No</button>
+        `;
+        document.getElementById('popupYes').onclick = () => { popup.style.display = 'none'; if(callback) callback(); }
+        document.getElementById('popupNo').onclick = () => popup.style.display = 'none';
+    } else {
+        btns.innerHTML = `<button class="popup-btn btn-confirm" id="popupOk">OK</button>`;
+        document.getElementById('popupOk').onclick = () => popup.style.display = 'none';
+    }
+    
+    popup.style.display = 'flex';
+}
+
+// Debounce
+function debounce(func, wait) {
+    let timeout;
+    return function(...args) {
+        clearTimeout(timeout);
+        timeout = setTimeout(() => func.apply(this, args), wait);
+    };
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadCategories();
+    loadProducts();
+    initEvents();
+})
+
+function initEvents(){
+    document.getElementById('searchInput').oninput = debounce(handleSearch, 300);
+    document.getElementById('categoryFilter').onchange = handleSearch;
+    document.getElementById('loadMore').onclick = loadMoreProducts;
+}
+
+async function loadCategories(){
+    const snapshot = await getDocs(collection(db, "categories"));
+    allCategories = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
+    const select = document.getElementById('categoryFilter');
+    allCategories.forEach(cat => {
+        select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+    });
+}
+
+async function loadProducts(reset = true){
+    if(isLoading) return;
+    isLoading = true;
+    document.getElementById('status').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading products...';
+    
+    if(reset){
+        allProducts = [];
+        displayedProducts = [];
+        document.getElementById('productGrid').innerHTML = '';
+    }
+
+    try {
+        const q = query(collection(db, "products"), orderBy("createdAt", "desc"), limit(LIMIT));
+        const snapshot = await getDocs(q);
+        
+        if(snapshot.empty){
+            document.getElementById('status').innerText = "No products found";
+            document.getElementById('loadMore').style.display = 'none';
+            isLoading = false;
+            return;
+        }
+
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        allProducts = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
+        displayedProducts = [...allProducts];
+        renderProducts(displayedProducts);
+        
+        document.getElementById('status').innerText = "";
+        document.getElementById('loadMore').style.display = 'flex';
+        
+        if(snapshot.docs.length < LIMIT){
+            document.getElementById('loadMore').disabled = true;
+            document.getElementById('loadMore').innerHTML = '<i class="fa-solid fa-check"></i> No more products';
+        }
+
+    } catch(err){
+        document.getElementById('status').innerText = "Error: " + err.message;
+    }
+    isLoading = false;
+}
+
+async function loadMoreProducts(){
+    if(isLoading || !lastVisible) return;
+    isLoading = true;
+    document.getElementById('loadMore').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
+    
+    const q = query(collection(db, "products"), orderBy("createdAt", "desc"), startAfter(lastVisible), limit(LIMIT));
+    const snapshot = await getDocs(q);
+    
+    if(!snapshot.empty){
+        lastVisible = snapshot.docs[snapshot.docs.length - 1];
+        const newProducts = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
+        allProducts = [...allProducts,...newProducts];
+        handleSearch();
+    }
+    
+    if(snapshot.docs.length < LIMIT){
+        document.getElementById('loadMore').disabled = true;
+        document.getElementById('loadMore').innerHTML = '<i class="fa-solid fa-check"></i> No more products';
+    } else {
+        document.getElementById('loadMore').innerHTML = '<i class="fa-solid fa-arrow-down"></i> Load More';
+    }
+    isLoading = false;
+}
+
+function handleSearch(){
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    const catId = document.getElementById('categoryFilter').value;
+    
+    displayedProducts = allProducts.filter(p => {
+        const matchSearch = p.name.toLowerCase().includes(searchTerm) || 
+                           (p.keywords && p.keywords.some(k => k.toLowerCase().includes(searchTerm)));
+        const matchCat = catId === '' || p.categoryId === catId;
+        return matchSearch && matchCat;
+    });
+    
+    renderProducts(displayedProducts);
+}
+
+function renderProducts(products){
+    const grid = document.getElementById('productGrid');
+    grid.innerHTML = '';
+    
+    if(products.length === 0){
+        document.getElementById('status').innerText = "No products found";
+        return;
+    }
+    
+    document.getElementById('status').innerText = "";
+    
+    products.forEach(p => {
+        const catName = allCategories.find(c => c.id === p.categoryId)?.name || 'Unknown';
+        const card = `
+            <div class="product-card">
+                <img src="${p.images[0]}" alt="${p.name}" loading="lazy">
+                <h3>${p.name}</h3>
+                <p class="price">$${p.currentPrice} <span class="old-price">$${p.oldPrice}</span></p>
+                <p class="cat"><i class="fa-solid fa-folder"></i> ${catName}</p>
+                <div class="btn-group">
+                    <button class="btn-edit" onclick="editProduct('${p.id}')"><i class="fa-solid fa-pen"></i> Edit</button>
+                    <button class="btn-delete" onclick="deleteProduct('${p.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>
+        `;
+        grid.innerHTML += card;
+    });
+}
+
+window.editProduct = (id) => {
+    window.location.href = `admin-edit-product.html?id=${id}`;
+}
+
+window.deleteProduct = (id) => {
+    showPopup('danger', 'Delete Product?', 'This action cannot be undone', true, async () => {
+        try {
+            await deleteDoc(doc(db, "products", id));
+            allProducts = allProducts.filter(p => p.id !== id);
+            handleSearch();
+            showPopup('success', 'Deleted!', 'Product deleted successfully');
+        } catch(err){
+            showPopup('danger', 'Error!', err.message);
+        }
+    });
+}
+</script>
+</body>
+</html>
