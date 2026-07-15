@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Contact Settings - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--warning:#fbbf24;--gradient:linear-gradient(135deg,#2563eb,#1e40af);--bg1:#0f172a;--bg2:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);padding:20px;color:#e2e8f0;}
+
+.card{max-width:750px;margin:20px auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:35px;border-radius:24px;border:1px solid rgba(255,255,255,.1);box-shadow:0 20px 60px rgba(0,0,0,.3);}
+h2{text-align:center;font-size:28px;font-weight:900;margin-bottom:30px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+label{font-weight:700;margin-top:18px;display:block;color:#94a3b8;font-size:14px;}
+input{width:100%;padding:16px;margin-top:10px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-weight:600;}
+input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.2);}
+.input-group{display:flex;gap:12px;align-items:center;margin-top:10px;}
+.input-group i{font-size:22px;width:30px;text-align:center;color:var(--accent);}
+
+#saveBtn{background:var(--gradient);width:100%;padding:18px;margin-top:25px;color:#fff;font-weight:800;font-size:17px;border:none;border-radius:15px;cursor:pointer;transition:.3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+#saveBtn:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(37,99,235,.4);}
+#saveBtn:disabled{opacity:.6;cursor:not-allowed;}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.top-bar a{color:var(--primary);font-weight:800;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px;}
+.logout{color:var(--danger);cursor:pointer;font-weight:800;background:rgba(239,68,68,.15);padding:10px 18px;border-radius:12px;display:flex;align-items:center;gap:8px;}
+.logout:hover{background:var(--danger);color:#fff;}
+
+.toggle-wrap{display:flex;justify-content:space-between;align-items:center;background:rgba(0,0,0,.3);padding:18px;border-radius:14px;margin-top:12px;border:1px solid rgba(255,255,255,.1);}
+.switch{position:relative;display:inline-block;width:55px;height:28px;}
+.switch input{opacity:0;width:0;height:0;}
+.slider{position:absolute;cursor:pointer;top:0;left:0;right:0;bottom:0;background-color:#334155;transition:.4s;border-radius:34px;}
+.slider:before{position:absolute;content:"";height:20px;width:20px;left:4px;bottom:4px;background-color:white;transition:.4s;border-radius:50%;}
+input:checked + .slider{background:var(--gradient);}
+input:checked + .slider:before{transform:translateX(27px);}
+.whatsapp-box{display:none;margin-top:12px;}
+.whatsapp-box.show{display:block;}
+.contact-list{margin-top:35px;}
+.contact-list h3{margin-bottom:18px;font-weight:800;}
+.contact-item{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.3);padding:16px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.1);gap:12px;flex-wrap:wrap;}
+.contact-item .info{display:flex;flex-direction:column;gap:6px;flex:1;min-width:0;font-weight:600;}
+.contact-item .info div{display:flex;align-items:center;gap:10px;}
+.btn-group{display:flex;gap:10px;}
+.btn-edit{background:var(--primary);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;}
+.btn-delete{background:var(--danger);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:800;font-size:14px;display:flex;align-items:center;gap:6px;}
+.btn-edit:hover,.btn-delete:hover{transform:scale(1.05);}
+
+/* Custom Popup */
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:999;animation:fadeIn.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup-box{background:#1e293b;padding:35px;border-radius:24px;width:90%;max-width:420px;text-align:center;transform:scale(.9);animation:scaleUp.3s forwards;border:1px solid rgba(255,255,255,.1);}
+@keyframes scaleUp{to{transform:scale(1);}}
+.popup-icon{font-size:60px;margin-bottom:15px;}
+.popup-box h3{font-size:22px;font-weight:900;margin-bottom:10px;color:#fff;}
+.popup-box p{color:#94a3b8;margin-bottom:20px;font-weight:600;}
+.popup-btns{display:flex;gap:10px;}
+.popup-btn{flex:1;padding:14px;border:none;border-radius:14px;font-weight:800;cursor:pointer;font-size:15px;transition:.3s;}
+.btn-confirm{background:var(--gradient);color:#fff;}
+.btn-cancel{background:#334155;color:#e2e8f0;}
+
+@media (max-width: 480px) {
+    .card{padding:25px;}
+    h2{font-size:24px;}
+    .contact-item{flex-direction:column;align-items:flex-start;}
+    .btn-group{width:100%;}
+    .btn-edit, .btn-delete{flex:1;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<div class="top-bar">
+    <a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <span class="logout" id="logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+</div>
+
+<h2>Contact Settings</h2>
+
+<form id="contactForm">
+    <div class="toggle-wrap">
+        <label style="margin:0;font-size:16px;">Live Support</label>
+        <label class="switch">
+          <input type="checkbox" id="liveSupport">
+          <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="whatsapp-box" id="whatsappBox">
+        <label>WhatsApp Number</label>
+        <div class="input-group">
+            <i class="fa-brands fa-whatsapp"></i>
+            <input type="tel" id="whatsapp" placeholder="8801XXXXXXXXX">
+        </div>
+    </div>
+
+    <label>Email Address</label>
+    <div class="input-group">
+        <i class="fa-solid fa-envelope"></i>
+        <input type="email" id="email" placeholder="support@hutbaz.com">
+    </div>
+
+    <label>Phone Number</label>
+    <div class="input-group">
+        <i class="fa-solid fa-phone"></i>
+        <input type="tel" id="phone" placeholder="01XXXXXXXXX">
+    </div>
+
+    <button type="submit" id="saveBtn"><i class="fa-solid fa-save"></i> Save Contact</button>
+</form>
+
+<div class="contact-list">
+    <h3><i class="fa-solid fa-address-book"></i> Saved Contacts</h3>
+    <div id="contactList"><div style="text-align:center;padding:30px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div></div>
+</div>
+</div>
+
+<!-- Custom Popup -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <div class="popup-icon" id="popupIcon"></div>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMsg"></p>
+        <div class="popup-btns" id="popupBtns">
+            <button class="popup-btn btn-confirm" id="popupOk">OK</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+let editId = null;
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+    if(!user) window.location.href = "index.html";
+})
+document.getElementById('logout').onclick = () => showPopup('warning', 'Logout?', 'Are you sure you want to logout?', true, () => signOut(auth));
+
+// Custom Popup
+function showPopup(type, title, msg, showCancel = false, callback = null){
+    const popup = document.getElementById('popup');
+    const icon = document.getElementById('popupIcon');
+    const btns = document.getElementById('popupBtns');
+    
+    document.getElementById('popupTitle').innerText = title;
+    document.getElementById('popupMsg').innerText = msg;
+    
+    if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>';
+    if(type === 'warning') icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>';
+    if(type === 'danger') icon.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>';
+    
+    if(showCancel){
+        btns.innerHTML = `
+            <button class="popup-btn btn-confirm" id="popupYes">Yes</button>
+            <button class="popup-btn btn-cancel" id="popupNo">No</button>
+        `;
+        document.getElementById('popupYes').onclick = () => { popup.style.display = 'none'; if(callback) callback(); }
+        document.getElementById('popupNo').onclick = () => popup.style.display = 'none';
+    } else {
+        btns.innerHTML = `<button class="popup-btn btn-confirm" id="popupOk">OK</button>`;
+        document.getElementById('popupOk').onclick = () => popup.style.display = 'none';
+    }
+    
+    popup.style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadContact();
+    initEvents();
+})
+
+function initEvents(){
+    document.getElementById('liveSupport').onchange = toggleWhatsapp;
+    document.getElementById('contactForm').onsubmit = handleSave;
+}
+
+function toggleWhatsapp(){
+    const box = document.getElementById('whatsappBox');
+    const isChecked = document.getElementById('liveSupport').checked;
+    if(isChecked){
+        box.classList.add('show');
+        document.getElementById('whatsapp').required = true;
+    } else {
+        box.classList.remove('show');
+        document.getElementById('whatsapp').required = false;
+    }
+}
+
+async function handleSave(e){
+  e.preventDefault();
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+  const liveSupport = document.getElementById('liveSupport').checked;
+  const whatsapp = document.getElementById('whatsapp').value;
+  const email = document.getElementById('email').value;
+  const phone = document.getElementById('phone').value;
+
+  const data = {
+    liveSupport: liveSupport,
+    whatsapp: liveSupport ? whatsapp : "",
+    email: email,
+    phone: phone,
+    updatedAt: serverTimestamp()
+  };
+
+  try {
+    if(editId){
+        await updateDoc(doc(db, "contactLinks", editId), data);
+        showPopup('success', 'Updated!', 'Contact information updated successfully');
+    } else {
+        await addDoc(collection(db, "contactLinks"), {...data, createdAt: serverTimestamp()});
+        showPopup('success', 'Saved!', 'Contact information saved successfully');
+    }
+
+    resetForm();
+    loadContact();
+  } catch(err){
+    showPopup('danger', 'Error!', err.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-save"></i> Save Contact';
+}
+
+async function loadContact(){
+    const listDiv = document.getElementById('contactList');
+    listDiv.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
+    try {
+        const q = query(collection(db, "contactLinks"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+
+        if(snapshot.empty){
+            listDiv.innerHTML = "<p style='color:#94a3b8;text-align:center;padding:20px;'>No contact information found</p>";
+            return;
+        }
+
+        listDiv.innerHTML = '';
+        snapshot.docs.forEach(docSnap => {
+            const data = docSnap.data();
+            const item = `
+                <div class="contact-item">
+                    <div class="info">
+                        ${data.liveSupport ? `<div><i class="fa-brands fa-whatsapp" style="color:#25D366"></i> WA: ${data.whatsapp}</div>` : ''}
+                        ${data.email ? `<div><i class="fa-solid fa-envelope" style="color:#EA4335"></i> ${data.email}</div>` : ''}
+                        ${data.phone ? `<div><i class="fa-solid fa-phone" style="color:#34A853"></i> ${data.phone}</div>` : ''}
+                    </div>
+                    <div class="btn-group">
+                        <button class="btn-edit" onclick="editContact('${docSnap.id}', ${JSON.stringify(data).replace(/"/g, '&quot;')})"><i class="fa-solid fa-pen"></i> Edit</button>
+                        <button class="btn-delete" onclick="deleteContact('${docSnap.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                    </div>
+                </div>
+            `;
+            listDiv.innerHTML += item;
+        });
+    } catch(err){
+        listDiv.innerHTML = `<p style="color:var(--danger);text-align:center;">Error: ${err.message}</p>`;
+    }
+}
+
+window.editContact = (id, data) => {
+    editId = id;
+    document.getElementById('liveSupport').checked = data.liveSupport;
+    document.getElementById('whatsapp').value = data.whatsapp;
+    document.getElementById('email').value = data.email;
+    document.getElementById('phone').value = data.phone;
+    toggleWhatsapp();
+    document.getElementById('saveBtn').innerHTML = '<i class="fa-solid fa-pen-to-square"></i> Update Contact';
+    window.scrollTo({top:0, behavior:'smooth'});
+}
+
+window.deleteContact = (id) => {
+    showPopup('danger', 'Delete Contact?', 'This action cannot be undone', true, async () => {
+        try {
+            await deleteDoc(doc(db, "contactLinks", id));
+            showPopup('success', 'Deleted!', 'Contact deleted successfully');
+            loadContact();
+        } catch(err){
+            showPopup('danger', 'Error!', err.message);
+        }
+    });
+}
+
+function resetForm(){
+    editId = null;
+    document.getElementById('contactForm').reset();
+    document.getElementById('whatsappBox').classList.remove('show');
+    document.getElementById('saveBtn').innerHTML = '<i class="fa-solid fa-save"></i> Save Contact';
+}
+</script>
+</body>
+</html>
