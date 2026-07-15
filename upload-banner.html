@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Banner Upload - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--gradient:linear-gradient(135deg,#2563eb,#1e40af);--bg1:#0f172a;--bg2:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);padding:20px;color:#e2e8f0;}
+.card{max-width:950px;margin:20px auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:35px;border-radius:24px;border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 80px rgba(0,0,0,.3);}
+h2{text-align:center;font-weight:900;margin-bottom:30px;font-size:28px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.top-bar a{color:var(--primary);font-weight:800;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px;}
+.logout{color:var(--danger);cursor:pointer;font-weight:800;background:rgba(239,68,68,.15);padding:10px 18px;border-radius:12px;display:flex;align-items:center;gap:8px;}
+.logout:hover{background:var(--danger);color:#fff;}
+.upload-box{border:2px dashed var(--primary);border-radius:16px;padding:40px;text-align:center;cursor:pointer;background:rgba(37,99,235,.08);margin-bottom:25px;transition:.3s;}
+.upload-box:hover{background:rgba(37,99,235,.15);border-color:var(--accent);}
+.upload-box i{font-size:48px;color:var(--primary);margin-bottom:12px;}
+.upload-box p{font-size:16px;color:#94a3b8;font-weight:600;}
+.preview-wrap{margin-top:20px;text-align:center;display:none;}
+.preview-wrap img{max-width:100%;border-radius:16px;border:3px solid var(--accent);aspect-ratio:981/363;object-fit:cover;}
+.preview-wrap p{margin-top:10px;color:#94a3b8;font-size:14px;font-weight:600;}
+input{width:100%;padding:16px;margin-top:15px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-weight:600;}
+input:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.2);}
+#uploadBtn{background:#334155;width:100%;padding:18px;margin-top:25px;color:#fff;font-weight:800;font-size:17px;border:none;border-radius:15px;cursor:not-allowed;display:flex;align-items:center;justify-content:center;gap:10px;}
+#uploadBtn.active{background:var(--gradient);cursor:pointer;color:#fff;box-shadow:0 8px 25px rgba(37,99,235,.3);}
+#uploadBtn.active:hover{transform:translateY(-2px);}
+.banner-list{margin-top:40px;}
+.banner-list h3{margin-bottom:20px;font-size:20px;font-weight:800;display:flex;align-items:center;gap:10px;}
+.banner-item{position:relative;margin-bottom:18px;border-radius:16px;overflow:hidden;border:2px solid rgba(255,255,255,.1);transition:.3s;}
+.banner-item:hover{border-color:var(--primary);transform:translateY(-3px);}
+.banner-item img{width:100%;display:block;aspect-ratio:981/363;object-fit:cover;}
+.banner-info{position:absolute;bottom:0;left:0;right:0;background:linear-gradient(transparent,rgba(0,0,0,.8));padding:15px;color:#fff;}
+.banner-info h4{font-size:16px;font-weight:800;}
+.banner-info p{font-size:13px;opacity:.8;}
+.btn-delete{position:absolute;top:12px;right:12px;background:var(--danger);color:#fff;border:none;padding:10px 14px;border-radius:10px;cursor:pointer;font-weight:800;font-size:13px;display:flex;align-items:center;gap:6px;}
+.btn-delete:hover{transform:scale(1.1);}
+.empty-text{text-align:center;color:#94a3b8;padding:40px;font-weight:600;}
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:999;animation:fadeIn.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup-box{background:#1e293b;padding:35px;border-radius:24px;width:90%;max-width:420px;text-align:center;transform:scale(.9);animation:scaleUp.3s forwards;border:1px solid rgba(255,255,255,.1);}
+@keyframes scaleUp{to{transform:scale(1);}}
+.popup-icon{font-size:60px;margin-bottom:15px;}
+.popup-box h3{font-size:22px;font-weight:900;margin-bottom:10px;color:#fff;}
+.popup-box p{color:#94a3b8;margin-bottom:20px;font-weight:600;}
+.popup-btns{display:flex;gap:10px;}
+.popup-btn{flex:1;padding:14px;border:none;border-radius:14px;font-weight:800;cursor:pointer;font-size:15px;}
+.btn-confirm{background:var(--gradient);color:#fff;}
+.btn-cancel{background:#334155;color:#e2e8f0;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<div class="top-bar">
+    <a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <span class="logout" id="logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+</div>
+
+<h2><i class="fa-solid fa-image"></i> Banner Upload - 981 x 363</h2>
+
+<div class="upload-box" id="uploadBox">
+    <i class="fa-solid fa-cloud-arrow-up"></i>
+    <p><b>+ Click to Select Banner</b><br><small>Any size will be auto converted to 981x363</small></p>
+    <input type="file" id="bannerFile" accept="image/*" style="display:none;">
+</div>
+
+<div class="preview-wrap" id="previewWrap">
+    <img id="previewImg" src="">
+    <p>Preview - 981 x 363</p>
+</div>
+
+<input type="text" id="title" placeholder="Banner Title">
+<input type="text" id="subtitle" placeholder="Banner Subtitle">
+<input type="text" id="link" placeholder="Banner Link (e.g: all-products.html)">
+
+<button id="uploadBtn"><i class="fa-solid fa-upload"></i> Upload Banner</button>
+
+<div class="banner-list">
+    <h3><i class="fa-solid fa-list"></i> Existing Banners</h3>
+    <div id="bannerList"><div style="text-align:center;padding:40px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div></div>
+</div>
+</div>
+
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <div class="popup-icon" id="popupIcon"></div>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMsg"></p>
+        <div class="popup-btns" id="popupBtns">
+            <button class="popup-btn btn-confirm" id="popupOk">OK</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const IMGBB_API_KEY = "6bf73ee25639931c6a8f44074740902c";
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+    if(!user) window.location.href = "index.html";
+})
+document.getElementById('logout').onclick = () => showPopup('warning', 'Logout?', 'Are you sure you want to logout?', true, () => signOut(auth));
+
+let selectedFile = null;
+
+function showPopup(type, title, msg, showCancel = false, callback = null){
+    const popup = document.getElementById('popup');
+    const icon = document.getElementById('popupIcon');
+    const btns = document.getElementById('popupBtns');
+    document.getElementById('popupTitle').innerText = title;
+    document.getElementById('popupMsg').innerText = msg;
+    if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>';
+    if(type === 'warning') icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>';
+    if(type === 'danger') icon.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>';
+    if(type === 'loading') icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#2563eb;"></i>';
+    if(showCancel){
+        btns.innerHTML = `<button class="popup-btn btn-confirm" id="popupYes">Yes</button><button class="popup-btn btn-cancel" id="popupNo">No</button>`;
+        document.getElementById('popupYes').onclick = () => { popup.style.display = 'none'; if(callback) callback(); }
+        document.getElementById('popupNo').onclick = () => popup.style.display = 'none';
+    } else {
+        btns.innerHTML = `<button class="popup-btn btn-confirm" id="popupOk">OK</button>`;
+        document.getElementById('popupOk').onclick = () => popup.style.display = 'none';
+    }
+    popup.style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadBanners();
+    initEvents();
+})
+
+function initEvents(){
+    document.getElementById('uploadBox').onclick = () => document.getElementById('bannerFile').click();
+    document.getElementById('bannerFile').onchange = handleFileSelect;
+    document.getElementById('uploadBtn').onclick = handleUpload;
+}
+
+async function handleFileSelect(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    showPopup('loading', 'Processing...', 'Converting image to 981x363');
+    document.getElementById('uploadBtn').classList.remove('active');
+    try {
+        selectedFile = await processImage(file, 981, 363, 0.8);
+        document.getElementById('previewImg').src = URL.createObjectURL(selectedFile);
+        document.getElementById('previewWrap').style.display = 'block';
+        document.getElementById('uploadBtn').classList.add('active');
+    } catch(err){
+        showPopup('danger', 'Error!', 'Failed to process image');
+    }
+    document.getElementById('popup').style.display = 'none';
+}
+
+// FIXED: [blob] array add করা হইছে
+function processImage(file, targetW, targetH, quality){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onerror = () => reject("Failed to read file");
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.onerror = () => reject("Failed to load image");
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement('canvas');
+        canvas.width = targetW;
+        canvas.height = targetH;
+        const ctx = canvas.getContext('2d');
+        let {width, height} = img;
+        let sx = 0, sy = 0;
+        let sWidth = width, sHeight = height;
+        const imgRatio = width / height;
+        const targetRatio = targetW / targetH;
+        if(imgRatio > targetRatio){
+            sWidth = height * targetRatio;
+            sx = (width - sWidth) / 2;
+        } else {
+            sHeight = width / targetRatio;
+            sy = (height - sHeight) / 2;
+        }
+        ctx.drawImage(img, sx, sy, sWidth, sHeight, 0, 0, targetW, targetH);
+        canvas.toBlob((blob) => {
+            if(!blob) return reject("Canvas to blob failed");
+            resolve(new File([blob], `banner-${Date.now()}.webp`, {
+    type: "image/webp"
+}));
+        }, "image/webp", quality);
+      }
+    }
+  });
+}
+
+async function handleUpload(){
+  const btn = document.getElementById('uploadBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Uploading...';
+  try {
+    showPopup('loading', 'Uploading...', 'Uploading banner to server');
+    const formData = new FormData();
+    formData.append("image", selectedFile);
+    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {method:"POST",body:formData});
+    const imgData = await res.json();
+    if(!imgData.success) throw new Error(imgData.error.message);
+    await addDoc(collection(db, "banners"), {
+        url: imgData.data.url,
+        title: document.getElementById("title").value.trim(),
+        subtitle: document.getElementById("subtitle").value.trim(),
+        link: document.getElementById("link").value.trim() || "all-products.html",
+        createdAt: serverTimestamp()
+    });
+    showPopup('success', 'Success!', 'Banner uploaded successfully');
+    resetUpload();
+    loadBanners();
+  } catch(err){
+    showPopup('danger', 'Error!', err.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-upload"></i> Upload Banner';
+}
+
+function resetUpload(){
+    selectedFile = null;
+    document.getElementById('bannerFile').value = '';
+    document.getElementById('previewWrap').style.display = 'none';
+    document.getElementById('uploadBtn').classList.remove('active');
+    document.getElementById('title').value = '';
+    document.getElementById('subtitle').value = '';
+    document.getElementById('link').value = '';
+}
+
+async function loadBanners(){
+    const listDiv = document.getElementById('bannerList');
+    listDiv.innerHTML = '<div style="text-align:center;padding:40px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
+    try {
+        const q = query(collection(db, "banners"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        if(snapshot.empty){
+            listDiv.innerHTML = `<p class='empty-text'><i class="fa-solid fa-inbox"></i><br>No banners found</p>`;
+            return;
+        }
+        listDiv.innerHTML = '';
+        snapshot.docs.forEach(docSnap => {
+            const data = docSnap.data();
+            const item = `
+                <div class="banner-item">
+                    <img src="${data.url}" alt="banner" loading="lazy" onerror="this.src='https://via.placeholder.com/981x363'">
+                    <div class="banner-info">
+                        <h4>${data.title || 'No Title'}</h4>
+                        <p>${data.subtitle || ''}</p>
+                    </div>
+                    <button class="btn-delete" onclick="deleteBanner('${docSnap.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            `;
+            listDiv.innerHTML += item;
+        });
+    } catch(err){
+        console.error(err);
+        listDiv.innerHTML = `<p class='empty-text'>Error: ${err.message}</p>`;
+    }
+}
+
+window.deleteBanner = (id) => {
+    showPopup('danger', 'Delete Banner?', 'This action cannot be undone', true, async () => {
+        try {
+            await deleteDoc(doc(db, "banners", id));
+            loadBanners();
+            showPopup('success', 'Deleted!', 'Banner deleted successfully');
+        } catch(err){
+            showPopup('danger', 'Error!', err.message);
+        }
+    });
+}
+</script>
+</body>
+</html>
