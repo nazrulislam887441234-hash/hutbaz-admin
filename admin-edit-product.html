@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Edit Product - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--warning:#fbbf24;--gradient:linear-gradient(135deg,#2563eb,#1e40af);--bg1:#0f172a;--bg2:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);padding:20px;color:#e2e8f0;}
+
+.card{max-width:850px;margin:20px auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:40px;border-radius:28px;border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 80px rgba(0,0,0,.3);}
+h2{text-align:center;font-weight:900;margin-bottom:30px;font-size:28px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+label{font-weight:700;margin-top:20px;display:block;color:#94a3b8;font-size:14px;}
+input,select,textarea{width:100%;padding:16px;margin-top:10px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-weight:600;}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.2);}
+textarea{min-height:140px;resize:vertical;}
+
+.price-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px;}
+
+.upload-box{border:2px dashed var(--primary);border-radius:16px;padding:30px;text-align:center;cursor:pointer;background:rgba(37,99,235,.08);margin-top:10px;transition:.3s;font-weight:700;}
+.upload-box:hover{background:rgba(37,99,235,.15);border-color:var(--accent);}
+
+.upload-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:14px;margin-top:18px;}
+.img-wrap{position:relative;}
+.preview-img{width:100%;aspect-ratio:1;object-fit:cover;border-radius:14px;border:3px solid var(--accent);}
+.img-wrap.remove{position:absolute;top:-10px;right:-10px;background:var(--danger);color:#fff;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;font-weight:900;font-size:18px;}
+.old-img-label{font-size:12px;color:#94a3b8;margin-top:6px;text-align:center;font-weight:600;}
+
+.keyword-box{display:flex;gap:10px;margin-top:10px;}
+.btn-add{padding:16px 22px;background:var(--gradient);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;display:flex;align-items:center;gap:8px;}
+.keyword-list{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;}
+.keyword-tag{background:rgba(37,99,235,.2);padding:8px 14px;border-radius:20px;font-size:13px;display:flex;align-items:center;gap:8px;font-weight:700;border:1px solid rgba(37,99,235,.3);}
+.keyword-tag span{cursor:pointer;color:var(--danger);font-weight:900;font-size:16px;}
+
+#updateBtn{background:#334155;cursor:not-allowed;width:100%;padding:18px;margin-top:30px;color:#fff;font-weight:800;font-size:17px;border:none;border-radius:15px;display:flex;align-items:center;justify-content:center;gap:10px;}
+#updateBtn.active{background:var(--gradient);cursor:pointer;color:#fff;box-shadow:0 8px 25px rgba(37,99,235,.3);}
+#updateBtn.active:hover{transform:translateY(-2px);}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;}
+.top-bar a{color:var(--primary);font-weight:800;text-decoration:none;display:flex;align-items:center;gap:8px;}
+.logout{color:var(--danger);cursor:pointer;font-weight:800;background:rgba(239,68,68,.15);padding:10px 18px;border-radius:12px;display:flex;align-items:center;gap:8px;}
+.logout:hover{background:var(--danger);color:#fff;}
+
+/* Custom Popup */
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:999;animation:fadeIn.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup-box{background:#1e293b;padding:35px;border-radius:24px;width:90%;max-width:420px;text-align:center;transform:scale(.9);animation:scaleUp.3s forwards;border:1px solid rgba(255,255,255,.1);}
+@keyframes scaleUp{to{transform:scale(1);}}
+.popup-icon{font-size:60px;margin-bottom:15px;}
+.popup-box h3{font-size:22px;font-weight:900;margin-bottom:10px;color:#fff;}
+.popup-box p{color:#94a3b8;margin-bottom:20px;font-weight:600;}
+.popup-btn{padding:14px 35px;background:var(--gradient);border:none;border-radius:14px;color:#fff;font-weight:800;cursor:pointer;font-size:16px;}
+</style>
+</head>
+<body>
+
+<div class="card">
+<div class="top-bar">
+    <a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <span class="logout" id="logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+</div>
+
+<h2><i class="fa-solid fa-pen-to-square"></i> Edit Product</h2>
+
+<form id="productForm">
+    <label>Select Category *</label>
+    <select id="category" required>
+        <option value="">Loading categories...</option>
+    </select>
+
+    <div class="price-grid">
+        <div>
+            <label>Previous Price *</label>
+            <input type="number" id="oldPrice" required>
+        </div>
+        <div>
+            <label>Current Price *</label>
+            <input type="number" id="currentPrice" required>
+        </div>
+    </div>
+
+    <label>Product Name *</label>
+    <input type="text" id="name" required>
+
+    <label>Description *</label>
+    <textarea id="description" required></textarea>
+
+    <label>Keywords</label>
+    <div class="keyword-box">
+        <input type="text" id="keywordInput" placeholder="Type keyword and press Add">
+        <button type="button" class="btn-add" id="addKeyword"><i class="fa-solid fa-plus"></i> Add</button>
+    </div>
+    <div class="keyword-list" id="keywordList"></div>
+
+    <label>Product Images <small style="color:#94a3b8;">Remove old + Add new</small></label>
+    <div class="upload-box" id="uploadBox">
+        <i class="fa-solid fa-cloud-arrow-up"></i>
+        <p><b>+ Add New Images</b></p>
+    </div>
+    <input type="file" id="image" accept="image/*" multiple style="display:none;">
+    <div class="upload-grid" id="previewGrid"></div>
+
+    <button type="submit" id="updateBtn"><i class="fa-solid fa-save"></i> Update Product</button>
+</form>
+</div>
+
+<!-- Custom Popup -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <div class="popup-icon" id="popupIcon"></div>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMsg"></p>
+        <button class="popup-btn" id="popupOk">OK</button>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const IMGBB_API_KEY = "6bf73ee25639931c6a8f44074740902c";
+
+const urlParams = new URLSearchParams(window.location.search);
+const productId = urlParams.get('id');
+
+let existingImages = [];
+let newCompressedFiles = [];
+let keywords = [];
+let productData = {};
+
+// Custom Popup
+function showPopup(type, title, msg, redirect = false){
+    const popup = document.getElementById('popup');
+    const icon = document.getElementById('popupIcon');
+
+    document.getElementById('popupTitle').innerText = title;
+    document.getElementById('popupMsg').innerText = msg;
+
+    if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>';
+    if(type === 'loading') icon.innerHTML = '<i class="fa-solid fa-spinner fa-spin" style="color:#2563eb;"></i>';
+    if(type === 'error') icon.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>';
+
+    popup.style.display = 'flex';
+    document.getElementById('popupOk').onclick = () => {
+        popup.style.display = 'none';
+        if(redirect) window.location.href = "all-products.html";
+    }
+}
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+    if(!user) window.location.href = "index.html";
+})
+document.getElementById('logout').onclick = () => signOut(auth);
+
+document.addEventListener('DOMContentLoaded', () => {
+    if(!productId){
+        showPopup('error', 'Error!', 'Product ID not found');
+        return;
+    }
+    loadProductData();
+    initEvents();
+})
+
+function initEvents(){
+    document.getElementById('uploadBox').onclick = () => document.getElementById('image').click();
+
+    document.getElementById('image').onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      for(let file of files){
+        const compressed = await compressImage(file, 1280, 0.75);
+        newCompressedFiles.push(compressed);
+        addPreview(compressed);
+      }
+      checkForm();
+      e.target.value = '';
+    }
+
+    document.getElementById('addKeyword').onclick = addKeywordFunc;
+    document.getElementById('keywordInput').onkeypress = (e) => {
+        if(e.key === 'Enter'){ e.preventDefault(); addKeywordFunc(); }
+    }
+
+    ['name','description','oldPrice','currentPrice','category'].forEach(id=>{
+        document.getElementById(id).oninput = checkForm;
+    })
+    document.getElementById('productForm').onsubmit = handleUpdate;
+}
+
+async function loadProductData(){
+    showPopup('loading', 'Loading...', 'Fetching product data');
+    const docRef = doc(db, "products", productId);
+    const docSnap = await getDoc(docRef);
+
+    if(!docSnap.exists()){
+        showPopup('error', 'Error!', 'Product not found');
+        return;
+    }
+
+    productData = docSnap.data();
+    document.getElementById('name').value = productData.name || '';
+    document.getElementById('description').value = productData.description || '';
+    document.getElementById('oldPrice').value = productData.oldPrice || 0;
+    document.getElementById('currentPrice').value = productData.currentPrice || 0;
+    keywords = productData.keywords || [];
+    existingImages = productData.images || [];
+
+    await loadCategories();
+
+    renderKeywords();
+    renderExistingImages();
+    checkForm();
+    document.getElementById('popup').style.display = 'none';
+}
+
+function renderExistingImages(){
+    document.getElementById('previewGrid').innerHTML = '';
+    existingImages.forEach((url, index) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'img-wrap';
+        wrap.innerHTML = `
+            <img src="${url}" class="preview-img">
+            <button type="button" class="remove" onclick="removeExistingImage(${index})">×</button>
+            <p class="old-img-label">Old</p>
+        `;
+        document.getElementById('previewGrid').appendChild(wrap);
+    });
+}
+window.removeExistingImage = (i) => {
+    existingImages.splice(i,1);
+    renderExistingImages();
+    checkForm();
+}
+
+function addPreview(file){
+    const wrap = document.createElement('div');
+    wrap.className = 'img-wrap';
+    wrap.innerHTML = `
+        <img src="${URL.createObjectURL(file)}" class="preview-img">
+        <button type="button" class="remove" onclick="removeNewImage(this, '${file.name}')">×</button>
+        <p class="old-img-label">New</p>
+    `;
+    document.getElementById('previewGrid').appendChild(wrap);
+}
+window.removeNewImage = (btn, name) => {
+    newCompressedFiles = newCompressedFiles.filter(f => f.name!== name);
+    btn.parentElement.remove();
+    checkForm();
+}
+
+function addKeywordFunc(){
+    const val = document.getElementById('keywordInput').value.trim();
+    if(val &&!keywords.includes(val)){
+        keywords.push(val);
+        renderKeywords();
+        document.getElementById('keywordInput').value = '';
+    }
+}
+
+function renderKeywords(){
+    document.getElementById('keywordList').innerHTML = keywords.map((k,i) =>
+        `<div class="keyword-tag">${k} <span onclick="removeKeyword(${i})">×</span></div>`
+    ).join('');
+}
+window.removeKeyword = (i) => { keywords.splice(i,1); renderKeywords(); }
+
+async function loadCategories(){
+    const select = document.getElementById('category');
+    const snapshot = await getDocs(collection(db, "categories"));
+    const cats = snapshot.docs.map(doc => ({id: doc.id,...doc.data()}));
+    cats.sort((a,b) => a.name.localeCompare(b.name));
+    select.innerHTML = '<option value="">Select Category *</option>';
+    cats.forEach(cat => {
+        select.innerHTML += `<option value="${cat.id}">${cat.name}</option>`;
+    });
+    select.value = productData.categoryId;
+}
+
+function compressImage(file, maxWidth, quality){
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (event) => {
+      const img = new Image();
+      img.src = event.target.result;
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let { width, height } = img;
+        if (width > maxWidth) {
+          height *= maxWidth / width;
+          width = maxWidth;
+        }
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext("2d").drawImage(img, 0, 0, width, height);
+        canvas.toBlob((blob) => {
+          resolve(new File([blob], file.name.replace(/\.[^/.]+$/, "") + ".webp", {type: "image/webp", lastModified: Date.now()}));
+        }, "image/webp", quality);
+      };
+    };
+  });
+}
+
+function checkForm(){
+    const btn = document.getElementById('updateBtn');
+    btn.classList.add('active');
+    btn.disabled = false;
+}
+
+async function handleUpdate(e){
+  e.preventDefault();
+  const btn = document.getElementById('updateBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Updating...';
+
+  try {
+    let newImageUrls = [];
+    for(let i=0; i<newCompressedFiles.length; i++){
+        showPopup('loading', 'Uploading...', `Uploading image ${i+1} of ${newCompressedFiles.length}`);
+        const formData = new FormData();
+        formData.append("image", newCompressedFiles[i]);
+        const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {method: "POST", body: formData});
+        const imgData = await res.json();
+        if (imgData.success) {
+            newImageUrls.push(imgData.data.url);
+        } else {
+            throw new Error(imgData.error?.message || "Image upload failed");
+        }
+    }
+
+    const allImages = [...existingImages,...newImageUrls];
+
+    await updateDoc(doc(db, "products", productId), {
+      name: document.getElementById('name').value,
+      description: document.getElementById('description').value,
+      images: allImages,
+      oldPrice: Number(document.getElementById('oldPrice').value),
+      currentPrice: Number(document.getElementById('currentPrice').value),
+      keywords: keywords,
+      categoryId: document.getElementById('category').value,
+      updatedAt: serverTimestamp()
+    });
+
+    showPopup('success', 'Success!', 'Product updated successfully', true);
+  } catch(err){
+    showPopup('error', 'Error!', err.message);
+    btn.disabled = false;
+    btn.innerHTML = '<i class="fa-solid fa-save"></i> Update Product';
+  }
+}
+</script>
+</body>
+</html>
