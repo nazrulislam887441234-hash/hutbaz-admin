@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orders - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--warning:#f59e0b;--info:#6366f1;--gradient:linear-gradient(135deg,#2563eb 0%,#1e40af 100%);}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins';}
+body{background:linear-gradient(135deg,#dbeafe 0%,#eff6ff 50%,#f0f9ff 100%);padding:20px;min-height:100vh;}
+
+/* Header Premium */
+.header{max-width:1500px;margin:0 auto 25px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:15px;}
+.header h1{font-size:28px;font-weight:900;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.back-btn{padding:12px 22px;background:#fff;border:2px solid rgba(37,99,235,0.2);border-radius:15px;color:var(--primary);font-weight:700;text-decoration:none;transition:.3s;display:flex;align-items:center;gap:8px;}
+.back-btn:hover{background:var(--primary);color:#fff;transform:translateY(-2px);}
+
+/* Filter Bar Glass */
+.filter-bar{background:rgba(255,255,255,0.7);backdrop-filter:blur(20px);padding:20px 25px;border-radius:20px;margin:0 auto 25px;max-width:1500px;display:flex;gap:20px;align-items:center;flex-wrap:wrap;box-shadow:0 10px 40px rgba(37,99,235,.1);border:1px solid rgba(255,255,255,0.5);}
+.filter-bar label{font-weight:800;font-size:15px;color:#1e293b;}
+.filter-bar select{padding:12px 18px;border-radius:12px;border:2px solid rgba(37,99,235,0.2);font-size:15px;font-weight:600;background:#fff;cursor:pointer;transition:.3s;}
+.filter-bar select:focus{border-color:var(--primary);outline:none;box-shadow:0 0 0 4px rgba(37,99,235,.1);}
+
+/* Container */
+.container{max-width:1500px;margin:0 auto;display:grid;gap:20px;}
+
+/* Order Card Premium */
+.order-card{background:rgba(255,255,255,0.8);backdrop-filter:blur(15px);border-radius:25px;padding:28px;box-shadow:0 15px 50px rgba(37,99,235,.12);border:1px solid rgba(255,255,255,0.6);border-left:6px solid var(--primary);transition:.3s;}
+.order-card:hover{transform:translateY(-5px);box-shadow:0 25px 70px rgba(37,99,235,.2);}
+.order-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;flex-wrap:wrap;gap:12px;}
+.order-id{font-weight:900;font-size:18px;color:#1e293b;display:flex;align-items:center;gap:8px;}
+.order-id span{color:var(--primary);}
+
+/* Status Badge */
+.status-badge{padding:8px 16px;border-radius:25px;font-weight:800;font-size:12px;text-transform:uppercase;letter-spacing:0.5px;}
+.status-New{background:linear-gradient(135deg,#dbeafe,#bfdbfe);color:#1e40af;}
+.status-Confirmed{background:linear-gradient(135deg,#fef3c7,#fde68a);color:#92400e;}
+.status-Shipping{background:linear-gradient(135deg,#ffedd5,#fed7aa);color:#9a3412;}
+.status-Delivered{background:linear-gradient(135deg,#d1fae5,#a7f3d0);color:#065f46;}
+.status-Cancelled{background:linear-gradient(135deg,#fee2e2,#fecaca);color:#991b1b;}
+
+/* Customer Info */
+.customer-info{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px;margin-bottom:18px;font-size:14px;}
+.customer-info p{background:rgba(248,250,252,0.6);padding:10px 14px;border-radius:10px;}
+.customer-info p strong{color:#475569;margin-right:5px;}
+.full-address{margin-bottom:15px;padding:12px;background:rgba(239,246,255,0.6);border-radius:10px;font-size:14px;}
+.note-box{margin:12px 0;padding:12px;background:rgba(254,243,199,0.6);border-left:3px solid var(--warning);border-radius:8px;font-size:14px;}
+
+/* Items List with Image */
+.items-list{margin:18px 0;border-top:2px solid rgba(241,245,249,0.8);padding-top:18px;}
+.items-list h4{margin-bottom:12px;font-weight:800;font-size:15px;display:flex;align-items:center;gap:8px;}
+.item-row{display:flex;justify-content:space-between;align-items:center;font-size:14px;padding:12px 0;border-bottom:1px solid rgba(241,245,249,0.8);}
+.item-row:last-child{border:none;}
+.item-left{display:flex;gap:12px;align-items:center;}
+.item-left img{width:50px;height:50px;border-radius:10px;object-fit:cover;border:2px solid rgba(219,234,254,0.8);}
+.item-name{font-weight:700;}
+.item-qty{font-size:12px;color:#64748b;}
+
+.summary-row{display:flex;justify-content:space-between;padding:8px 0;font-size:15px;color:#334155;font-weight:600;}
+.total-amount{text-align:right;font-weight:900;font-size:20px;color:var(--accent);margin:18px 0;padding-top:15px;border-top:2px dashed rgba(226,232,240,0.8);}
+
+/* Actions */
+.actions{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:15px;padding-top:15px;border-top:1px solid rgba(241,245,249,0.8);}
+.actions select{padding:12px 16px;border-radius:12px;border:2px solid rgba(37,99,235,0.2);font-weight:600;background:#fff;cursor:pointer;}
+.btn-update{padding:12px 24px;background:var(--gradient);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 6px 20px rgba(37,99,235,.3);}
+.btn-update:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(37,99,235,.4);}
+.btn-delete{padding:12px 24px;background:linear-gradient(135deg,#ef4444,#dc2626);color:#fff;border:none;border-radius:12px;font-weight:800;cursor:pointer;transition:.3s;}
+.btn-delete:hover{transform:translateY(-2px);box-shadow:0 8px 25px rgba(239,68,68,.4);}
+
+.empty{text-align:center;padding:60px;color:#94a3b8;font-size:18px;font-weight:700;}
+.loading{text-align:center;padding:60px;font-weight:800;color:var(--primary);font-size:16px;}
+.loading i{font-size:35px;margin-bottom:15px;animation:spin 1s linear infinite;}
+@keyframes spin{100%{transform:rotate(360deg);}}
+
+@media(max-width:768px){
+ .filter-bar{flex-direction:column;align-items:flex-start;}
+ .order-card{padding:20px;}
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1><i class="fa-solid fa-boxes-stacked"></i> All Orders</h1>
+    <a href="dashboard.html" class="back-btn"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+</div>
+
+<div class="filter-bar">
+    <label><i class="fa-solid fa-filter"></i> Filter by Status:</label>
+    <select id="statusFilter" onchange="loadOrders()">
+        <option value="all">All Orders</option>
+        <option value="New">New</option>
+        <option value="Confirmed">Confirmed</option>
+        <option value="Shipping">Shipping</option>
+        <option value="Delivered">Delivered</option>
+        <option value="Cancelled">Cancelled</option>
+    </select>
+</div>
+
+<div class="container" id="ordersContainer">
+    <div class="loading"><i class="fa-solid fa-spinner"></i><br>Loading Orders...</div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (user) => {
+    if (!user) {
+        window.location.href = "index.html";
+        return;
+    }
+    if (user.email!== "hutbazbd@gmail.com") {
+        alert("Access Denied");
+        window.location.href = "index.html";
+        return;
+    }
+    loadOrders();
+});
+
+let allOrders = [];
+
+async function loadOrders(){
+    const container = document.getElementById('ordersContainer');
+    const filter = document.getElementById('statusFilter').value;
+    container.innerHTML = '<div class="loading"><i class="fa-solid fa-spinner"></i><br>Loading Orders...</div>';
+
+    try {
+        const q = query(collection(db, "orders"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+        allOrders = [];
+        snapshot.forEach(docSnap => {
+            allOrders.push({id: docSnap.id,...docSnap.data()});
+        });
+
+        let filteredOrders = filter == 'all'? allOrders : allOrders.filter(o => o.status == filter);
+
+        if(filteredOrders.length == 0){
+            container.innerHTML = '<div class="empty"><i class="fa-solid fa-inbox"></i><br>No Orders Found</div>';
+            return;
+        }
+
+        container.innerHTML = '';
+        filteredOrders.forEach(order => {
+            const date = order.createdAt?.toDate().toLocaleString('en-US') || 'N/A';
+            let itemsHtml = '';
+            order.items.forEach(item => {
+                const img = item.images?.[0] || item.image || 'https://via.placeholder.com/50';
+                itemsHtml += `
+                <div class="item-row">
+                    <div class="item-left">
+                        <img src="${img}" alt="${item.name}">
+                        <div>
+                            <div class="item-name">${item.name}</div>
+                            <div class="item-qty">Qty: ${item.qty}</div>
+                        </div>
+                    </div>
+                    <span>৳${(item.price * item.qty).toFixed(2)}</span>
+                </div>`;
+            });
+
+            container.innerHTML += `
+            <div class="order-card">
+                <div class="order-top">
+                    <div class="order-id"><i class="fa-solid fa-hashtag"></i> Order ID: <span>${order.orderId}</span></div>
+                    <span class="status-badge status-${order.status}">${order.status}</span>
+                </div>
+
+                <div class="customer-info">
+                    <p><strong><i class="fa-solid fa-user"></i> Name:</strong> ${order.name}</p>
+                    <p><strong><i class="fa-solid fa-phone"></i> Phone:</strong> ${order.phone}</p>
+                    <p><strong><i class="fa-solid fa-location-dot"></i> Area:</strong> ${order.thana}, ${order.district}, ${order.division}</p>
+                    <p><strong><i class="fa-solid fa-calendar"></i> Date:</strong> ${date}</p>
+                </div>
+
+                <div class="full-address"><strong>Full Address:</strong> ${order.address}</div>
+                ${order.note? `<div class="note-box"><strong><i class="fa-solid fa-note-sticky"></i> Note:</strong> ${order.note}</div>` : ''}
+
+                <div class="items-list">
+                    <h4><i class="fa-solid fa-bag-shopping"></i> Ordered Products</h4>
+                    ${itemsHtml}
+                </div>
+
+                <div class="summary-row">
+                    <span>Subtotal:</span>
+                    <span>৳${(order.subTotal || 0).toFixed(2)}</span>
+                </div>
+                <div class="summary-row">
+                    <span>Delivery Charge:</span>
+                    <span>৳${(order.deliveryCharge || 0).toFixed(2)}</span>
+                </div>
+                <div class="total-amount">
+                    Grand Total: ৳${(order.total || 0).toFixed(2)}
+                </div>
+
+                <div class="actions">
+                    <label style="font-weight:700;">Update Status:</label>
+                    <select id="status-${order.id}">
+                        <option value="New" ${order.status=='New'?'selected':''}>New</option>
+                        <option value="Confirmed" ${order.status=='Confirmed'?'selected':''}>Confirmed</option>
+                        <option value="Shipping" ${order.status=='Shipping'?'selected':''}>Shipping</option>
+                        <option value="Delivered" ${order.status=='Delivered'?'selected':''}>Delivered</option>
+                        <option value="Cancelled" ${order.status=='Cancelled'?'selected':''}>Cancelled</option>
+                    </select>
+                    <button class="btn-update" onclick="updateStatus('${order.id}')"><i class="fa-solid fa-check"></i> Update</button>
+                    <button class="btn-delete" onclick="deleteOrder('${order.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            </div>`;
+        });
+
+    } catch(err){
+        container.innerHTML = `<div class="empty"><i class="fa-solid fa-circle-exclamation"></i><br>Error: ${err.message}</div>`;
+    }
+}
+
+window.updateStatus = async (orderId) => {
+    const newStatus = document.getElementById(`status-${orderId}`).value;
+    try {
+        await updateDoc(doc(db, "orders", orderId), { status: newStatus });
+        alert("✅ Status Updated Successfully");
+        loadOrders();
+    } catch(err){
+        alert("❌ Error: " + err.message);
+    }
+}
+
+window.deleteOrder = async (orderId) => {
+    if(!confirm("Are you sure you want to delete this order?")){
+        return;
+    }
+    try{
+        await deleteDoc(doc(db, "orders", orderId));
+        alert("✅ Order Deleted Successfully");
+        loadOrders();
+    }catch(err){
+        alert("❌ Error: " + err.message);
+    }
+}
+</script>
+</body>
+</html>
