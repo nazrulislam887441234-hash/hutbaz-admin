@@ -141,8 +141,16 @@ async function loadOrders(){
             allOrders.push({id: docSnap.id,...docSnap.data()});
         });
 
-        let filteredOrders = filter == 'all'? allOrders : allOrders.filter(o => o.status == filter);
+        let filteredOrders;
 
+if(filter === "all"){
+    filteredOrders = allOrders;
+}else{
+    filteredOrders = allOrders.filter(order =>
+        (order.status || "").trim().toLowerCase() ===
+        filter.trim().toLowerCase()
+    );
+}
         if(filteredOrders.length == 0){
             container.innerHTML = '<div class="empty"><i class="fa-solid fa-inbox"></i><br>No Orders Found</div>';
             return;
