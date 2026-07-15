@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Social Links - HUTBAZ Admin</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<style>
+:root{--primary:#2563eb;--accent:#16a34a;--danger:#ef4444;--gradient:linear-gradient(135deg,#2563eb,#1e40af);--bg1:#0f172a;--bg2:#1e293b;}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{min-height:100vh;background:linear-gradient(135deg,var(--bg1) 0%,var(--bg2) 100%);padding:20px;color:#e2e8f0;}
+
+.card{max-width:750px;margin:20px auto;background:rgba(255,255,255,.08);backdrop-filter:blur(20px);padding:35px;border-radius:24px;border:1px solid rgba(255,255,255,.1);box-shadow:0 25px 80px rgba(0,0,0,.3);}
+h2{text-align:center;font-weight:900;margin-bottom:30px;font-size:28px;background:var(--gradient);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+
+label{font-weight:700;margin-top:18px;display:block;color:#94a3b8;font-size:14px;}
+input,select{width:100%;padding:16px;margin-top:10px;border-radius:14px;border:2px solid rgba(255,255,255,.15);background:rgba(0,0,0,.3);color:#fff;font-size:16px;font-weight:600;}
+input:focus,select:focus{outline:none;border-color:var(--primary);box-shadow:0 0 0 4px rgba(37,99,235,.2);}
+
+.input-group{display:flex;gap:12px;align-items:center;margin-top:10px;}
+.input-group i{font-size:24px;width:30px;text-align:center;flex-shrink:0;}
+
+#saveBtn{background:var(--gradient);width:100%;padding:18px;margin-top:25px;color:#fff;font-weight:800;font-size:17px;border:none;border-radius:15px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 8px 25px rgba(37,99,235,.3);}
+#saveBtn:hover{transform:translateY(-2px);}
+
+.top-bar{display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;gap:10px;}
+.top-bar a{color:var(--primary);font-weight:800;text-decoration:none;font-size:15px;display:flex;align-items:center;gap:8px;}
+.logout{color:var(--danger);cursor:pointer;font-weight:800;background:rgba(239,68,68,.15);padding:10px 18px;border-radius:12px;display:flex;align-items:center;gap:8px;}
+.logout:hover{background:var(--danger);color:#fff;}
+
+.link-list{margin-top:30px;}
+.link-list h3{font-size:20px;font-weight:800;margin-bottom:18px;}
+.link-item{display:flex;align-items:center;justify-content:space-between;background:rgba(0,0,0,.3);padding:16px;border-radius:14px;margin-bottom:12px;border:1px solid rgba(255,255,255,.1);gap:12px;flex-wrap:wrap;}
+.link-item.info{display:flex;align-items:center;gap:12px;flex:1;min-width:0;}
+.link-item.info i{font-size:22px;flex-shrink:0;}
+.link-item.info a{color:#e2e8f0;text-decoration:none;word-break:break-all;font-size:14px;font-weight:600;}
+.btn-delete{background:var(--danger);color:#fff;border:none;padding:10px 16px;border-radius:10px;cursor:pointer;font-weight:800;font-size:14px;flex-shrink:0;display:flex;align-items:center;gap:6px;}
+.btn-delete:hover{transform:scale(1.05);}
+
+/* Custom Popup */
+.popup{position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.7);backdrop-filter:blur(10px);display:none;justify-content:center;align-items:center;z-index:999;animation:fadeIn.3s;}
+@keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+.popup-box{background:#1e293b;padding:35px;border-radius:24px;width:90%;max-width:420px;text-align:center;transform:scale(.9);animation:scaleUp.3s forwards;border:1px solid rgba(255,255,255,.1);}
+@keyframes scaleUp{to{transform:scale(1);}}
+.popup-icon{font-size:60px;margin-bottom:15px;}
+.popup-box h3{font-size:22px;font-weight:900;margin-bottom:10px;color:#fff;}
+.popup-box p{color:#94a3b8;margin-bottom:20px;font-weight:600;}
+.popup-btns{display:flex;gap:10px;}
+.popup-btn{flex:1;padding:14px;border:none;border-radius:14px;font-weight:800;cursor:pointer;font-size:15px;}
+.btn-confirm{background:var(--gradient);color:#fff;}
+.btn-cancel{background:#334155;color:#e2e8f0;}
+
+@media (max-width: 480px) {
+  .link-item{flex-direction:column;align-items:flex-start;}
+  .btn-delete{width:100%;justify-content:center;}
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<div class="top-bar">
+    <a href="dashboard.html"><i class="fa-solid fa-arrow-left"></i> Dashboard</a>
+    <span class="logout" id="logout"><i class="fa-solid fa-right-from-bracket"></i> Logout</span>
+</div>
+
+<h2><i class="fa-solid fa-link"></i> Social Links</h2>
+
+<form id="linkForm">
+    <label>Select Platform *</label>
+    <select id="platform" required>
+        <option value="">Select Platform</option>
+        <option value="youtube">YouTube</option>
+        <option value="facebook">Facebook</option>
+        <option value="instagram">Instagram</option>
+        <option value="twitter">Twitter / X</option>
+        <option value="tiktok">TikTok</option>
+        <option value="linkedin">LinkedIn</option>
+    </select>
+
+    <label>Profile URL *</label>
+    <div class="input-group">
+        <i id="iconPreview" class="fa-solid fa-link" style="color:#94a3b8;"></i>
+        <input type="url" id="linkUrl" placeholder="https://youtube.com/@yourchannel" required>
+    </div>
+
+    <button type="submit" id="saveBtn"><i class="fa-solid fa-save"></i> Save Link</button>
+</form>
+
+<div class="link-list">
+    <h3><i class="fa-solid fa-list"></i> Saved Links</h3>
+    <div id="linkList"><div style="text-align:center;padding:30px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div></div>
+</div>
+</div>
+
+<!-- Custom Popup -->
+<div class="popup" id="popup">
+    <div class="popup-box">
+        <div class="popup-icon" id="popupIcon"></div>
+        <h3 id="popupTitle"></h3>
+        <p id="popupMsg"></p>
+        <div class="popup-btns" id="popupBtns">
+            <button class="popup-btn btn-confirm" id="popupOk">OK</button>
+        </div>
+    </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, doc, deleteDoc, query, orderBy, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {apiKey:"AIzaSyA7iGMmxsXkAP_zKqTECGHIV1bJQ0IpBF0",authDomain:"e-1commers.firebaseapp.com",projectId:"e-1commers",storageBucket:"e-1commers.firebasestorage.app",messagingSenderId:"943299209327",appId:"1:943299209327:web:852c9640ffd92ad0ca859a"};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+// Auth Guard
+onAuthStateChanged(auth, user => {
+    if(!user) window.location.href = "index.html";
+})
+document.getElementById('logout').onclick = () => showPopup('warning', 'Logout?', 'Are you sure you want to logout?', true, () => signOut(auth));
+
+// Platform Icon Map
+const icons = {
+    youtube: 'fa-brands fa-youtube',
+    facebook: 'fa-brands fa-facebook',
+    instagram: 'fa-brands fa-instagram',
+    twitter: 'fa-brands fa-x-twitter',
+    tiktok: 'fa-brands fa-tiktok',
+    linkedin: 'fa-brands fa-linkedin'
+}
+const colors = {
+    youtube: '#FF0000',
+    facebook: '#1877F2',
+    instagram: '#E4405F',
+    twitter: '#1DA1F2',
+    tiktok: '#00f2ea',
+    linkedin: '#0A66C2'
+}
+
+// Custom Popup
+function showPopup(type, title, msg, showCancel = false, callback = null){
+    const popup = document.getElementById('popup');
+    const icon = document.getElementById('popupIcon');
+    const btns = document.getElementById('popupBtns');
+
+    document.getElementById('popupTitle').innerText = title;
+    document.getElementById('popupMsg').innerText = msg;
+
+    if(type === 'success') icon.innerHTML = '<i class="fa-solid fa-circle-check" style="color:#16a34a;"></i>';
+    if(type === 'warning') icon.innerHTML = '<i class="fa-solid fa-triangle-exclamation" style="color:#fbbf24;"></i>';
+    if(type === 'danger') icon.innerHTML = '<i class="fa-solid fa-circle-xmark" style="color:#ef4444;"></i>';
+
+    if(showCancel){
+        btns.innerHTML = `
+            <button class="popup-btn btn-confirm" id="popupYes">Yes</button>
+            <button class="popup-btn btn-cancel" id="popupNo">No</button>
+        `;
+        document.getElementById('popupYes').onclick = () => { popup.style.display = 'none'; if(callback) callback(); }
+        document.getElementById('popupNo').onclick = () => popup.style.display = 'none';
+    } else {
+        btns.innerHTML = `<button class="popup-btn btn-confirm" id="popupOk">OK</button>`;
+        document.getElementById('popupOk').onclick = () => popup.style.display = 'none';
+    }
+
+    popup.style.display = 'flex';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadLinks();
+    initEvents();
+})
+
+function initEvents(){
+    document.getElementById('platform').onchange = updateIcon;
+    document.getElementById('linkForm').onsubmit = handleSave;
+}
+
+function updateIcon(){
+    const platform = document.getElementById('platform').value;
+    const iconEl = document.getElementById('iconPreview');
+    if(platform){
+        iconEl.className = icons[platform];
+        iconEl.style.color = colors[platform];
+    } else {
+        iconEl.className = 'fa-solid fa-link';
+        iconEl.style.color = '#94a3b8';
+    }
+}
+
+async function handleSave(e){
+  e.preventDefault();
+  const btn = document.getElementById('saveBtn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Saving...';
+
+  const platform = document.getElementById('platform').value;
+  const url = document.getElementById('linkUrl').value;
+
+  try {
+    await addDoc(collection(db, "socialLinks"), {
+      platform: platform,
+      url: url,
+      icon: icons[platform],
+      color: colors[platform],
+      createdAt: serverTimestamp()
+    });
+
+    showPopup('success', 'Success!', 'Social link saved successfully');
+    document.getElementById('linkForm').reset();
+    updateIcon();
+    loadLinks();
+  } catch(err){
+    showPopup('danger', 'Error!', err.message);
+  }
+  btn.disabled = false;
+  btn.innerHTML = '<i class="fa-solid fa-save"></i> Save Link';
+}
+
+async function loadLinks(){
+    const listDiv = document.getElementById('linkList');
+    listDiv.innerHTML = '<div style="text-align:center;padding:30px;color:#94a3b8;"><i class="fa-solid fa-spinner fa-spin"></i> Loading...</div>';
+    try {
+        const q = query(collection(db, "socialLinks"), orderBy("createdAt", "desc"));
+        const snapshot = await getDocs(q);
+
+        if(snapshot.empty){
+            listDiv.innerHTML = "<p style='color:#94a3b8;text-align:center;padding:20px;'>No social links found</p>";
+            return;
+        }
+
+        listDiv.innerHTML = '';
+        snapshot.docs.forEach(docSnap => {
+            const data = docSnap.data();
+            const item = `
+                <div class="link-item">
+                    <div class="info">
+                        <i class="${data.icon}" style="color:${data.color}"></i>
+                        <a href="${data.url}" target="_blank">${data.url}</a>
+                    </div>
+                    <button class="btn-delete" onclick="deleteLink('${docSnap.id}')"><i class="fa-solid fa-trash"></i> Delete</button>
+                </div>
+            `;
+            listDiv.innerHTML += item;
+        });
+    } catch(err){
+        listDiv.innerHTML = `<p style="color:var(--danger);text-align:center;">Error: ${err.message}</p>`;
+    }
+}
+
+window.deleteLink = (id) => {
+    showPopup('danger', 'Delete Link?', 'This action cannot be undone', true, async () => {
+        try {
+            await deleteDoc(doc(db, "socialLinks", id));
+            loadLinks();
+            showPopup('success', 'Deleted!', 'Social link deleted successfully');
+        } catch(err){
+            showPopup('danger', 'Error!', err.message);
+        }
+    });
+}
+</script>
+</body>
+</html>
